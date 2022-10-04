@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id    Int     @id @default(autoincrement())
+  email String  @unique
+  firstName  String
+  lastName  String
+  password String
+  games Game[]
+  dailyWords UserDailyWord[]
+}
+
+model WordleWord {
+  id Int @default(autoincrement())
+  word String @id
+  guesses Guess[]
+  games Game[]
+  dailyWord DailyWord[]
+}
+
+model Game {
+  id Int @id @default(autoincrement())
+  user User @relation(fields: [userId], references: [id])
+  userId Int 
+  guesses Guess[]
+  correctWordObj WordleWord @relation(fields: [correctWord], references: [word])
+  correctWord String
+  createdAt DateTime @default(now())
+  dialyWordsUsers UserDailyWord[]
+}
+
+model Guess{
+  id Int @id @default(autoincrement())
+  wordObj WordleWord @relation(fields: [word], references: [word])
+  word String
+  game Game @relation(fields: [gameId], references: [id])
+  gameId Int
+  guessedAt DateTime @default(now())
+}
+
+model DailyWord {
+  id Int @id @default(autoincrement())
+  date DateTime @default(now())
+  wordObj WordleWord @relation(fields: [word], references: [word])
+  word String
+  users UserDailyWord[]
+}
+
+model UserDailyWord {
+  dailyWordId Int 
+  dailyWord DailyWord @relation(fields: [dailyWordId], references: [id])
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+  gameId Int
+  game Game @relation(fields: [gameId], references: [id])
+  @@unique([userId, dailyWordId])
+}
