@@ -13,6 +13,16 @@ export const getRegex = (lettersArr: Letter[][]) => {
         }
     })
 
+    lettersWithIndex.forEach(({ letter, type, letterIndex })=>{
+        if(type === 'some') {
+            regexArray[letterIndex] = regexArray[letterIndex] === '_' 
+                ? `[^${letter}]` 
+                : regexArray[letterIndex].startsWith('[^') 
+                    ? `${regexArray[letterIndex].slice(0,-1)}${letter}]`
+                    : regexArray[letterIndex]
+        }
+    })
+
     const someLetters = lettersWithIndex.filter(({ type }) => type=== 'some')
 
     const someRegex = someLetters.map(({ letter})=> `(?=.*${letter})`).join('');

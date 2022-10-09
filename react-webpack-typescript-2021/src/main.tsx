@@ -9,7 +9,7 @@ console.log('[RWT] : Execution started');
 
 // Application to Render
 const app = (<Router>
-    <Application title='RWT Boilerplate' version='1.0.0' />;
+    <Application title='RWT Boilerplate' version='1.0.0' />
 </Router>)
 
 // Render application in DOM

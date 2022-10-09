@@ -57,11 +57,10 @@ const WordleGame: React.FC<Props> = ({  gameId, createNewGame, stats=false }) =>
     const guessedCorrect = initialGuesses?.some(guess => guess.word === game.correctWord)
 
     const guessWord = (word: string) => {
-        if (initialGuesses.length + 1 < NUMBER_OF_GUESSES) {
+        if (initialGuesses.length < NUMBER_OF_GUESSES) {
             addGuess(word)
         }
     }
-    console.log(game)
     const sortedInitialGuesses = initialGuesses.sort((guess1, guess2) => new Date(guess1.guessedAt).getTime() - new Date(guess2.guessedAt).getTime())
 
     return (
@@ -75,12 +74,14 @@ const WordleGame: React.FC<Props> = ({  gameId, createNewGame, stats=false }) =>
                             {
                                 completeGuess
                                     ? <CompleteRow 
-                                    key={`complete-row-${index}`} 
-                                    correctWord={game.correctWord} 
-                                    guess={completeGuess} 
-                                    rowIndex={index} 
-                                    stats={stats} 
-                                    score={game.scores && game.scores[index]} />
+                                        key={`complete-row-${index}`} 
+                                        correctWord={game.correctWord} 
+                                        guess={completeGuess} 
+                                        rowIndex={index} 
+                                        stats={stats} 
+                                        score={game.scores && game.scores[index]} 
+                                        canCalculateBest={game.scores && game.scores[index-1] && game.scores[index-1].wordCount < 20}
+                                    />
                                     : index === sortedInitialGuesses.length && !guessedCorrect
                                         ? <CurrentRow key={`current-row`} guessWord={guessWord} wordleWords={wordleWords} rowIndex={index}></CurrentRow>
                                         : <DisabledRow key={`diabled-row-${index}`} rowIndex={index} />

@@ -6,6 +6,7 @@ import './CompleteRow.less';
 import { Link } from 'react-router-dom';
 import { getLetters } from '../WordleLogic';
 import { GameWithScores } from '@src/components/user-stats/UserStats';
+import axios from 'axios';
 
 interface Props {
     guess: Guess
@@ -13,10 +14,22 @@ interface Props {
     rowIndex: number
     stats: boolean,
     score: GameWithScores['scores'][number]
+    canCalculateBest: boolean
 }
 
 
-const CompleteRow: React.FC<Props> = ({ guess, correctWord, rowIndex, stats, score }) => {
+const CompleteRow: React.FC<Props> = ({ guess, correctWord, rowIndex, stats, score, canCalculateBest }) => {
+    const [bestGuess, setBestGuess] = useState<{ word: string, avg: number }>(null)
+    const [loading, setLoading] = useState<boolean>(false)
+
+    const getBestGuess = () => {
+        setLoading(true)
+        axios.get(`/guesses/${guess.id}/best`).then(res => {
+            setBestGuess(res.data)
+            setLoading(false)
+        })
+    }
+
     const letters = getLetters(guess.word, correctWord)
     return (
         <>
@@ -31,6 +44,20 @@ const CompleteRow: React.FC<Props> = ({ guess, correctWord, rowIndex, stats, sco
                     <div className='row-stats-word-count'>
                         Word Count: {score.wordCount}
                     </div>
+                    <div className='row-stats-best-word'>{
+                        canCalculateBest && (
+                            loading
+                                ? <div>loading</div>
+                                : !bestGuess
+                                    ? <button
+                                        className='row-stats-get-best-word'
+                                        onClick={getBestGuess}
+                                    >
+                                        Calculate Best Word
+                                    </button>
+                                    : bestGuess.word
+                        )
+                    }</div>
                 </div>
             )}
         </>

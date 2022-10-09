@@ -2,9 +2,11 @@ import { Game, Guess, PrismaClient } from "@prisma/client"
 import { getLetters } from "./GetLetters"
 import { getRegex } from "./GetRegex"
 
-const getWordCount = async (prismaClient: PrismaClient, regex: string): Promise<number>=> (await prismaClient.$queryRawUnsafe<{word: string}[]>(
+export const getWordCount = async (prismaClient: PrismaClient, regex: string): Promise<number>=> (await prismaClient.$queryRawUnsafe<{word: string}[]>(
     `SELECT word FROM api."WordleWord" WHERE word ~ '${regex}'`)).length
 
+export const getWords = async (prismaClient: PrismaClient, regex: string): Promise<string[]>=> (await prismaClient.$queryRawUnsafe<{word: string}[]>(
+    `SELECT word FROM api."WordleWord" WHERE word ~ '${regex}'`)).map(d=> d.word)
 
 export const getGameStats = async (game: Game & {guesses: Guess[]}, prismaClient: PrismaClient)=> {
     const correctWord = game?.correctWord

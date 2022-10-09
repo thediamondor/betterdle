@@ -4,7 +4,6 @@ import { Request, Response } from "express";
 export const getAddGameRoute = (prismaClient: PrismaClient) => async (request: Request, response: Response) => {
     const gameId = +request.params.gameId
     const word: string = request.body.word
-    console.log(request.body)
     const result = await prismaClient.guess.create({
         data: {
             game: { connect: { id: gameId } },
